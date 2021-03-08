@@ -33,8 +33,8 @@ fn main() -> io::Result<()> {
             println!("PLEASE ANSWER YES OR NO");
         }
     }
-    let mut playing = true;
-    while playing {
+    let mut running = true;
+    while running {
         let mut take_last: bool;
         let mut move_first: bool;
         let mut num_piles: usize;
@@ -90,6 +90,32 @@ fn main() -> io::Result<()> {
             }
         }
         // the game logic itself
+        loop {
+            if move_first {
+                loop {
+                    println!("YOUR MOVE - PILE, NUMBER TO BE REMOVED");
+                    let mut input = String::new();
+                    io::stdin().read_line(&mut input)?;
+                    //TODO parse two numbers separated by something (comma? space?)
+                    if let Ok(n) = input.trim().parse::<i32>() {
+                        //TODO
+                        break;
+                    }
+                }
+                // if all_piles_empty(pile_sizes) {
+                //     println!("MACHINE LOSES");
+                //     break;
+                // }
+            }
+            move_first = true; // starting from the next loop player has to move
+            if take_last {
+            } else {
+                //WTF is that control flow???
+                // if two or less piles with any nims left -> special case
+                // but if there are two piles with more than 1 nim -> not special case??? wtf
+                //
+            }
+        }
         //TODO
 
         println!("do you want to play another game");
@@ -99,7 +125,7 @@ fn main() -> io::Result<()> {
             if input.trim() == "YES" || input.trim() == "yes" {
                 break;
             } else if input.trim() == "NO" || input.trim() == "no" {
-                playing = false;
+                running = false;
                 break;
             } else {
                 println!("PLEASE.  YES OR NO.");
