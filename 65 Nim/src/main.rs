@@ -108,15 +108,40 @@ fn main() -> io::Result<()> {
                 // }
             }
             move_first = true; // starting from the next loop player has to move
-            if take_last {
-            } else {
-                //WTF is that control flow???
-                // if two or less piles with any nims left -> special case
-                // but if there are two piles with more than 1 nim -> not special case??? wtf
-                //
+
+            // the usual nim strategy is to keep xor of all pile sizes equal to zero
+            // however there is one exception - if one is playing 'a misère game',
+            // so that one doesn't want to take the last stone; in this case at one point the
+            // normal move for winning would leave only the piles of size one; f.e.
+            // 3 1 1 1 -> 1 1 1 1
+            // and from that point the game progression can't be changed. So instead one has to
+            // take all the stones from the pile:
+            // 3 1 1 1 -> 0 1 1 1
+            // would would force the other player to take the last stone
+
+            //TODO mb also add counting of piles of size 1 here
+            let mut count = 0;
+            for &x in &pile_sizes {
+                if x > 0 { count += 1; }
             }
+
+            match count {
+                0 => {
+                    // game is over
+                },
+                1 => {
+                    // game is almost over
+                },
+                2 => {
+                    // if one of the piles has size 1 game is almost over
+                },
+                _ => {
+                    // if only piles of size 1 left - game is over
+                    // else employ normal logic
+                },
+            }
+
         }
-        //TODO
 
         println!("do you want to play another game");
         loop {
