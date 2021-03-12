@@ -9,6 +9,8 @@ fn main() -> io::Result<()> {
     println!();
     println!("THIS IS THE GAME OF NIM.");
     println!("DO YOU WANT INSTRUCTIONS");
+    // standard input loop, the same construct is repeated everywhere in code where
+    // an input of certain format is expected
     loop {
         let mut input = String::new();
         io::stdin().read_line(&mut input)?;
@@ -37,7 +39,7 @@ fn main() -> io::Result<()> {
     while running {
         let mut take_last: bool;
         let mut move_first: bool;
-        let mut num_piles: usize;
+        let mut piles_count: usize;
         let mut pile_sizes: Vec::<i32>;
         println!();
         loop {
@@ -55,14 +57,14 @@ fn main() -> io::Result<()> {
             io::stdin().read_line(&mut input)?;
             if let Ok(n) = input.trim().parse::<usize>() {
                 if n > 0 && n < 101 {
-                    num_piles = n;
+                    piles_count = n;
                     break;
                 }
             }
         }
-        pile_sizes = vec![0, num_piles as i32];
+        pile_sizes = vec![0, piles_count as i32];
         println!("ENTER PILE SIZES");
-        for i in 0..num_piles {
+        for i in 0..piles_count {
             loop {
                 println!("{}", i);
                 let mut input = String::new();
@@ -119,28 +121,40 @@ fn main() -> io::Result<()> {
             // 3 1 1 1 -> 0 1 1 1
             // would would force the other player to take the last stone
 
-            //TODO mb also add counting of piles of size 1 here
-            let mut count = 0;
+            // here the code logic slightly differs from that of the original code
+            let mut nonempty_piles_count = 0;
+            let mut one_stone_piles_count = 0;
             for &x in &pile_sizes {
-                if x > 0 { count += 1; }
+                if x > 0 {
+                    nonempty_piles_count += 1;
+                }
+                if x == 1 {
+                    one_stone_piles_count += 1;
+                }
             }
-
-            match count {
+            match nonempty_piles_count - one_stone_piles_count {
                 0 => {
-                    // game is over
+                    if (one_stone_piles_count % 2 == 0) == take_last {
+                        // this covers even number of piles + taking last
+                        // and odd number of piles + leaving last
+                        println!("MACHINE WINS");
+                    } else {
+                        println!("MACHINE LOSES");
+                    }
+                    // TODO
+                    break;
                 },
                 1 => {
-                    // game is almost over
-                },
-                2 => {
-                    // if one of the piles has size 1 game is almost over
+                    // game is 1 move away from being over, depending on the goal either take the
+                    // entire large pile or leave one stone in it
+                    // TODO
                 },
                 _ => {
-                    // if only piles of size 1 left - game is over
-                    // else employ normal logic
+                    // game goes on, play to maintain the invariant
+                    // TODO
                 },
             }
-
+            
         }
 
         println!("do you want to play another game");
@@ -163,7 +177,7 @@ fn main() -> io::Result<()> {
 
 // 210 DIM A(100),B(100,10),D(2)
 // take_last - W == '1'
-// num_piles - N
+// piles_count - N
 // pile_sizes[i] - A(I)
 // move_first - Q9$
 //
